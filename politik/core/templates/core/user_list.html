@@ -1,0 +1,139 @@
+{% extends "base.html" %} 
+
+{% block content %}
+<style>
+    .partisan-container {
+        padding: 20px;
+    }
+
+    .partisan-title {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .partisan-search-form {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .partisan-search-input {
+        padding: 10px;
+        width: 250px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .partisan-search-button {
+        padding: 10px 15px;
+        margin-left: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .partisan-search-button:hover {
+        background-color: #0056b3;
+    }
+
+    .partisan-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .partisan-card {
+        display: flex;
+        flex-direction: column; /* Changer la direction à verticale */
+        align-items: flex-start; /* Alignement à gauche */
+        padding: 10px;
+        background: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        transition: background 0.3s;
+        width: calc(20% - 10px);
+        min-width: 150px;
+    }
+
+    .partisan-card:hover {
+        background: #e9ecef;
+    }
+
+    .contact-avatar {
+        margin-bottom: 10px; /* Ajouter un espace en dessous de l'avatar */
+    }
+
+    .avatar-image {
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        object-fit: cover;
+    }
+
+    .contact-info {
+        text-align: left; /* Alignement du texte à gauche */
+    }
+
+    .contact-name {
+        font-weight: bold;
+        text-decoration: none;
+        color: #007bff;
+        margin: 0 0 5px 0; /* Espace en dessous du nom */
+    }
+
+    .contact-region,
+    .contact-cellule {
+        color: #555;
+        margin: 0; /* Aucune marge */
+    }
+
+    .contact-name:hover {
+        text-decoration: underline;
+    }
+
+    /* Styles responsives */
+    @media (max-width: 768px) {
+        .partisan-card {
+            width: calc(50% - 10px);
+        }
+    }
+
+    @media (max-width: 480px) {
+        .partisan-card {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="partisan-container">
+    <h1 class="partisan-title">Liste des utilisateurs</h1>
+
+    <form method="get" action="{% url 'user_list' %}" class="partisan-search-form">
+        <input type="text" name="q" placeholder="Rechercher par nom ou région" value="{{ query }}" class="partisan-search-input">
+        <button type="submit" class="partisan-search-button">Rechercher</button>
+    </form>
+
+    <div class="partisan-list">
+        {% for user in users %}
+            <div class="partisan-card">
+                <div class="contact-avatar">
+                    {% if user.profile_pic and user.profile_pic.name %}
+                        <img src="{{ user.profile_pic.url }}" alt="{{ user.username }}'s profile picture" class="avatar-image">
+                    {% else %}
+                        <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Default avatar" class="avatar-image">
+                    {% endif %}
+                </div>
+                <div class="contact-info">
+                    <a href="{% if user.id == request.user.id %}{% url 'profile' %}{% else %}{% url 'user_profile' user.id %}{% endif %}" class="contact-name">{{ user.username }}</a>
+                    <p class="contact-region">{{ user.region }}</p>
+                    <p class="contact-cellule">{{ user.cellule }}</p>
+                </div>
+            </div>
+        {% empty %}
+            <p>Aucun utilisateur trouvé.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
